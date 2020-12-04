@@ -1,2 +1,6 @@
 *.out
-executables/
+*.o
+*.mod
+*.un~
+*.nc
+*.swp
