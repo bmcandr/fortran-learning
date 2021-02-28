@@ -25,7 +25,7 @@ $(TARGET) : $(MAIN_SRC) $(OBJS)
 	$(FC) -fcheck=bounds $? -o $@ $(FLAGS) $(LIBS)
 
 $(BUILD_DIR)/%.o:$(UTILS_DIR)/%.f90 | $(BUILD_DIR)
-	$(FC) -c $? -o $@ $(INCFLAGS) $(LD_FLAGS)
+	$(FC) -c $? -o $@ $(FLAGS)
 
 $(BUILD_DIR) :
 	@echo "Folder $< does not exist. Creating now..."
