@@ -21,7 +21,7 @@ program write_netcdf
     status = nf90_create('data/data.nc', NF90_NETCDF4, ncid)
     call checkStatus(status, 'open')
 
-    call create_coords(dy, dx, nc, nr, lat_array, lon_array, field)
+    call createCoords(dy, dx, nc, nr, lat_array, lon_array, field)
     
     ! add lon dimension 
     status = nf90_def_dim(ncid, 'longitude', nc, dimid_lon)
@@ -98,7 +98,7 @@ program write_netcdf
     
     contains
 
-    subroutine create_coords(dy, dx, nc, nr, lat_array, lon_array, field)
+    subroutine createCoords(dy, dx, nc, nr, lat_array, lon_array, field)
         
         implicit none
         
@@ -131,6 +131,6 @@ program write_netcdf
             end do
         end do
 
-    end subroutine create_coords
+    end subroutine createCoords
 
 end program write_netcdf
