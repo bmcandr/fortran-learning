@@ -5,6 +5,10 @@ program write_netcdf
     
     implicit none
 
+    integer :: shuffle = 1
+    integer :: deflate_level = 2
+    logical :: compress = .false.
+
     integer :: status, ncid
     integer :: dimid_lon, dimid_lat 
     integer :: varid_lon, varid_lat, varid_field
@@ -26,16 +30,37 @@ program write_netcdf
     status = nf90_def_dim(ncid, 'latitude', ny, dimid_lat)
     call checkStatus(status, 'def lat')
 
-    ! add variables
-    status = nf90_def_var(ncid, 'longitude', NF90_FLOAT, [dimid_lon], varid_lon)
-    call checkStatus(status, 'def var lon')
+    ! define variables
+    if ( compress ) then
 
-    status = nf90_def_var(ncid, 'latitude', NF90_FLOAT, [dimid_lat], varid_lat)
-    call checkStatus(status, 'def var lat')
+        status = nf90_def_var(ncid, 'longitude', NF90_FLOAT, &
+                                [dimid_lon], varid_lon, &
+                                deflate_level=deflate_level)
+        call checkStatus(status, 'def var lon')
 
-    status = nf90_def_var(ncid, 'field', NF90_FLOAT, [dimid_lon, dimid_lat], &
-        varid_field)
-    call checkStatus(status, 'def var field')
+        status = nf90_def_var(ncid, 'latitude', NF90_FLOAT, &
+                                [dimid_lat], varid_lat, &
+                                deflate_level=deflate_level)
+        call checkStatus(status, 'def var lat')
+
+        status = nf90_def_var(ncid, 'field', NF90_FLOAT, &
+                                [dimid_lon, dimid_lat], &
+                                varid_field, deflate_level=deflate_level)
+        call checkStatus(status, 'def var field')
+
+    else
+
+        status = nf90_def_var(ncid, 'longitude', NF90_FLOAT, [dimid_lon], varid_lon)
+        call checkStatus(status, 'def var lon')
+
+        status = nf90_def_var(ncid, 'latitude', NF90_FLOAT, [dimid_lat], varid_lat)
+        call checkStatus(status, 'def var lat')
+
+        status = nf90_def_var(ncid, 'field', NF90_FLOAT, [dimid_lon, dimid_lat], &
+                                varid_field)
+        call checkStatus(status, 'def var field')
+
+    endif
     
     ! add attributes
     status = nf90_put_att(ncid, NF90_GLOBAL, 'note', &
