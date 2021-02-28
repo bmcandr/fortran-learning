@@ -4,3 +4,4 @@
 *.un~
 *.nc
 *.swp
+write_netcdf
