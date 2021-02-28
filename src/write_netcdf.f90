@@ -58,7 +58,7 @@ program write_netcdf
     status = nf90_put_var(ncid, varid_lat, lat_array)
     call checkStatus(status, 'write lat')
 
-    status = nf90_put_Var(ncid, varid_field, field)
+    status = nf90_put_var(ncid, varid_field, field)
     call checkStatus(status, 'write field')
 
     ! close file
