@@ -1,4 +1,4 @@
-module check_mod
+module checkStatus_mod
     
     use netcdf
     
@@ -6,7 +6,7 @@ module check_mod
 
     contains
 
-    subroutine check(status, operation)
+    subroutine checkStatus(status, operation)
         
         implicit none
         
@@ -19,6 +19,6 @@ module check_mod
         write (*,*) "Error encountered during ", operation
         write (*,*) nf90_strerror(status)
         STOP 1
-    end subroutine check
+    end subroutine checkStatus
 
-end module check_mod
+end module checkStatus_mod

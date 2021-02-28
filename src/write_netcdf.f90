@@ -1,7 +1,7 @@
 program write_netcdf
     
     use netcdf
-    use check_mod
+    use checkStatus_mod
     
     implicit none
 
@@ -14,56 +14,56 @@ program write_netcdf
     real, dimension(:, :), allocatable :: field
 
     status = nf90_create('data/data.nc', NF90_NETCDF4, ncid)
-    call check(status, 'open')
+    call checkStatus(status, 'open')
 
     call create_coords(ny, nx, lat_array, lon_array, field)
     
     ! add lon dimension 
     status = nf90_def_dim(ncid, 'longitude', nx, dimid_lon)
-    call check(status, 'def lon')
+    call checkStatus(status, 'def lon')
     
     ! add lat dimension
     status = nf90_def_dim(ncid, 'latitude', ny, dimid_lat)
-    call check(status, 'def lat')
+    call checkStatus(status, 'def lat')
 
     ! add variables
     status = nf90_def_var(ncid, 'longitude', NF90_FLOAT, [dimid_lon], varid_lon)
-    call check(status, 'def var lon')
+    call checkStatus(status, 'def var lon')
 
     status = nf90_def_var(ncid, 'latitude', NF90_FLOAT, [dimid_lat], varid_lat)
-    call check(status, 'def var lat')
+    call checkStatus(status, 'def var lat')
 
     status = nf90_def_var(ncid, 'field', NF90_FLOAT, [dimid_lon, dimid_lat], &
         varid_field)
-    call check(status, 'def var field')
+    call checkStatus(status, 'def var field')
     
     ! add attributes
     status = nf90_put_att(ncid, NF90_GLOBAL, 'note', &
         'training file created with Fortran 90')
-    call check(status, 'put note attr')
+    call checkStatus(status, 'put note attr')
 
     status = nf90_put_att(ncid, varid_lon, 'units', 'degree_east')
-    call check(status, 'put lon units attr')
+    call checkStatus(status, 'put lon units attr')
     
     status = nf90_put_att(ncid, varid_lat, 'units', 'degree_north')
-    call check(status, 'put lat units attr')
+    call checkStatus(status, 'put lat units attr')
 
     status = nf90_put_att(ncid, varid_field, '_FillValue', -2e8)
-    call check(status, 'put _FillValue attr')
+    call checkStatus(status, 'put _FillValue attr')
 
     ! write variables
     status = nf90_put_var(ncid, varid_lon, lon_array)
-    call check(status, 'write lon')
+    call checkStatus(status, 'write lon')
 
     status = nf90_put_var(ncid, varid_lat, lat_array)
-    call check(status, 'write lat')
+    call checkStatus(status, 'write lat')
 
     status = nf90_put_Var(ncid, varid_field, field)
-    call check(status, 'write field')
+    call checkStatus(status, 'write field')
 
     ! close file
     status = nf90_close(ncid)
-    call check(status, 'close')
+    call checkStatus(status, 'close')
 
     ! deallocate arrays
     deallocate(lat_array)
