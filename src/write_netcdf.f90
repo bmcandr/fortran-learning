@@ -5,29 +5,30 @@ program write_netcdf
     
     implicit none
 
-    integer :: shuffle = 1
     integer :: deflate_level = 2
-    logical :: compress = .false.
+    logical :: compress = .true.
 
     integer :: status, ncid
     integer :: dimid_lon, dimid_lat 
     integer :: varid_lon, varid_lat, varid_field
-    integer :: nx = 200
-    integer :: ny = 101
+    real, parameter    :: dy = 0.01
+    real, parameter    :: dx = 0.01
+    integer, parameter :: nc = 360 / dx
+    integer, parameter :: nr = 180 / dy
     real, dimension(:), allocatable :: lon_array, lat_array
     real, dimension(:, :), allocatable :: field
 
     status = nf90_create('data/data.nc', NF90_NETCDF4, ncid)
     call checkStatus(status, 'open')
 
-    call create_coords(ny, nx, lat_array, lon_array, field)
+    call create_coords(dy, dx, nc, nr, lat_array, lon_array, field)
     
     ! add lon dimension 
-    status = nf90_def_dim(ncid, 'longitude', nx, dimid_lon)
+    status = nf90_def_dim(ncid, 'longitude', nc, dimid_lon)
     call checkStatus(status, 'def lon')
     
     ! add lat dimension
-    status = nf90_def_dim(ncid, 'latitude', ny, dimid_lat)
+    status = nf90_def_dim(ncid, 'latitude', nr, dimid_lat)
     call checkStatus(status, 'def lat')
 
     ! define variables
@@ -97,33 +98,35 @@ program write_netcdf
     
     contains
 
-    subroutine create_coords(ny, nx, lat_array, lon_array, field)
+    subroutine create_coords(dy, dx, nc, nr, lat_array, lon_array, field)
         
         implicit none
         
-        integer :: i, j
-        integer :: pi = 3.14156
-        integer, intent(in) :: ny, nx
+        integer             :: i, j
+        integer, parameter  :: pi = 3.14156
+        real                :: to_radians = pi / 180.
+        real, intent(in)    :: dy, dx
+        integer, intent(in) :: nc, nr
         real, dimension(:), allocatable, intent(inout) :: lon_array, lat_array
         real, dimension(:, :), allocatable, intent(inout) :: field
         
-        allocate(lon_array(0:nx - 1))
-        allocate(lat_array(0:ny - 1))
-        allocate(field(0:nx-1, 0:ny-1))
+        allocate(lon_array(0:nc - 1))
+        allocate(lat_array(0:nr - 1))
+        allocate(field(0:nc - 1, 0:nr - 1))
 
         ! lon loop
-        do i = 0, nx - 1
+        do i = 0, nc - 1
 
-            lon_array(i) = i * (360. / (nx))
+            lon_array(i) = (i * dx - 180) + dx / 2
             
             ! lat loop
-            do j = 0, ny - 1
+            do j = 0, nr - 1
                 
-                lat_array(j) = j * (180. / (ny - 1)) - 90
-                 
+                lat_array(j) = (j * dy - 90) + dy / 2
+
                 ! create field value
-                field(i, j) = sin(lon_array(i) * pi / 180.) * &
-                    cos(lat_array(j) * pi / 180.)
+                field(i, j) = sin(lon_array(i) * to_radians) * &
+                    cos(lat_array(j) * to_radians)
             
             end do
         end do
