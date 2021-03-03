@@ -11,8 +11,8 @@ program write_netcdf
     integer :: status, ncid
     integer :: dimid_lon, dimid_lat 
     integer :: varid_lon, varid_lat, varid_field
-    real, parameter    :: dy = 0.01
-    real, parameter    :: dx = 0.01
+    real, parameter    :: dy = 0.25
+    real, parameter    :: dx = 0.25
     integer, parameter :: nc = 360 / dx
     integer, parameter :: nr = 180 / dy
     real, dimension(:), allocatable :: lon_array, lat_array
