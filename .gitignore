@@ -6,3 +6,4 @@
 *.swp
 write_netcdf
 build/
+.DS_STORE
