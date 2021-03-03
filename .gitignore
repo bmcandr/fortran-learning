@@ -5,3 +5,4 @@
 *.nc
 *.swp
 write_netcdf
+build/
